@@ -20,7 +20,7 @@ public class LinksController {
     try {
         return LinkLister.getLinksV2(url);
     } catch (BadRequest e) {
-        throw e;
+        throw new BadRequest(e.getMessage());
     }
   }
 }
