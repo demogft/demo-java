@@ -57,32 +57,5 @@ class ServerError extends RuntimeException {
   }
 }
 
-class Comment {
-  private String username;
-  private String body;
 
-  public Comment(String username, String body) {
-    this.username = username;
-    this.body = body;
-  }
-
-  public String getUsername() {
-    return this.username;
-  }
-
-  public String getBody() {
-    return this.body;
-  }
-
-  public static List<Comment> fetchAll() {
-    // implementation to fetch all comments
-  }
-
-  public static Comment create(String username, String body) {
-    // implementation to create a new comment
-  }
-
-  public static Boolean delete(String id) {
-    // implementation to delete a comment by id
-  }
 }
