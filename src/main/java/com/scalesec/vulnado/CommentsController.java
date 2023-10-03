@@ -16,7 +16,7 @@ public class CommentsController {
   @GetMapping(value = "/comments", produces = "application/json")
   List<Comment> comments(@RequestHeader(value="x-auth-token") String token) {
     User.assertAuth(secret, token);
-    return Comment.fetch_all();
+    return Comment.fetchAll(); // fixed method name
   }
 
   @PostMapping(value = "/comments", produces = "application/json", consumes = "application/json")
@@ -54,5 +54,35 @@ class BadRequest extends RuntimeException {
 class ServerError extends RuntimeException {
   public ServerError(String exception) {
     super(exception);
+  }
+}
+
+class Comment {
+  private String username;
+  private String body;
+
+  public Comment(String username, String body) {
+    this.username = username;
+    this.body = body;
+  }
+
+  public String getUsername() {
+    return this.username;
+  }
+
+  public String getBody() {
+    return this.body;
+  }
+
+  public static List<Comment> fetchAll() {
+    // implementation to fetch all comments
+  }
+
+  public static Comment create(String username, String body) {
+    // implementation to create a new comment
+  }
+
+  public static Boolean delete(String id) {
+    // implementation to delete a comment by id
   }
 }
