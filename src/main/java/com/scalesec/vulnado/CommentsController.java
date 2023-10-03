@@ -36,8 +36,8 @@ class CommentRequest implements Serializable {
   private final String body;
 
   public CommentRequest(String username, String body) {
-      this.username = username;
-      this.body = body;
+    this.username = username;
+    this.body = body;
   }
 
   public String getUsername() {
