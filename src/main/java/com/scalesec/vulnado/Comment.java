@@ -10,10 +10,10 @@ import java.util.logging.Logger;
 public class Comment {
   private static final Logger LOGGER = Logger.getLogger(Comment.class.getName());
 
-  private String id;
-  private String username;
-  private String body;
-  private Timestamp createdOn;
+  private final String id;
+  private final String username;
+  private final String body;
+  private final Timestamp createdOn;
 
   public Comment(String id, String username, String body, Timestamp createdOn) {
     this.id = id;
@@ -35,7 +35,7 @@ public class Comment {
   }
 
   public Timestamp getCreatedOn() {
-    return createdOn;
+    return new Timestamp(createdOn.getTime());
   }
 
   public static Comment create(String username, String body){
