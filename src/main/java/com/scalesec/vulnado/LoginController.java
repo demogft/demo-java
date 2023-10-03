@@ -2,13 +2,13 @@ package com.scalesec.vulnado;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.boot.autoconfigure.*;
 import org.springframework.beans.factory.annotation.*;
 import java.io.Serializable;
 
 @RestController
 @EnableAutoConfiguration
 public class LoginController {
+
   @Value("${app.secret}")
   private String secret;
 
@@ -27,19 +27,19 @@ class LoginRequest implements Serializable {
   private String username;
   private String password;
 
-  public String getUsername() {
+  String getUsername() {
     return username;
   }
 
-  public void setUsername(String username) {
+  void setUsername(String username) {
     this.username = username;
   }
 
-  public String getPassword() {
+  String getPassword() {
     return password;
   }
 
-  public void setPassword(String password) {
+  void setPassword(String password) {
     this.password = password;
   }
 }
@@ -47,16 +47,16 @@ class LoginRequest implements Serializable {
 class LoginResponse implements Serializable {
   private final String token;
 
-  public LoginResponse(String msg) { this.token = msg; }
+  LoginResponse(String msg) { this.token = msg; }
 
-  public String getToken() {
+  String getToken() {
     return token;
   }
 }
 
 @ResponseStatus(HttpStatus.UNAUTHORIZED)
 class Unauthorized extends RuntimeException {
-  public Unauthorized(String exception) {
+  Unauthorized(String exception) {
     super(exception);
   }
 }
