@@ -8,31 +8,36 @@ import java.security.NoSuchAlgorithmException;
 import java.sql.PreparedStatement;
 import java.sql.Statement;
 import java.util.UUID;
+import java.util.logging.Logger;
 
 public class Postgres {
 
+    private static Logger log = Logger.getLogger(Postgres.class.getName());
+
+    private Postgres() {
+        // Private constructor to hide the implicit public one.
+    }
+
     public static Connection connection() {
+        String url = new StringBuilder()
+                .append("jdbc:postgresql://")
+                .append(System.getenv("PGHOST"))
+                .append("/")
+                .append(System.getenv("PGDATABASE")).toString();
         try {
-            Class.forName("org.postgresql.Driver");
-            String url = new StringBuilder()
-                    .append("jdbc:postgresql://")
-                    .append(System.getenv("PGHOST"))
-                    .append("/")
-                    .append(System.getenv("PGDATABASE")).toString();
             return DriverManager.getConnection(url,
                     System.getenv("PGUSER"), System.getenv("PGPASSWORD"));
         } catch (Exception e) {
-            e.printStackTrace();
-            System.err.println(e.getClass().getName()+": "+e.getMessage());
+            log.severe(e.getClass().getName()+": "+e.getMessage());
             System.exit(1);
         }
         return null;
     }
+
     public static void setup(){
-        try {
-            System.out.println("Setting up Database...");
-            Connection c = connection();
-            Statement stmt = c.createStatement();
+        try (Connection c = connection();
+             Statement stmt = c.createStatement()) {
+            log.info("Setting up Database...");
 
             // Create Schema
             stmt.executeUpdate("CREATE TABLE IF NOT EXISTS users(user_id VARCHAR (36) PRIMARY KEY, username VARCHAR (50) UNIQUE NOT NULL, password VARCHAR (50) NOT NULL, created_on TIMESTAMP NOT NULL, last_login TIMESTAMP)");
@@ -51,10 +56,35 @@ public class Postgres {
 
             insertComment("rick", "cool dog m8");
             insertComment("alice", "OMG so cute!");
-            c.close();
         } catch (Exception e) {
-            System.out.println(e);
+            log.severe(e.getMessage());
             System.exit(1);
+        }
+    }
+
+    private static void insertUser(String username, String password) {
+       String sql = "INSERT INTO users (user_id, username, password, created_on) VALUES (?, ?, ?, current_timestamp)";
+       try (Connection con = connection();
+            PreparedStatement pStatement = con.prepareStatement(sql)) {
+          pStatement.setString(1, UUID.randomUUID().toString());
+          pStatement.setString(2, username);
+          pStatement.setString(3, md5(password));
+          pStatement.executeUpdate();
+       } catch(Exception e) {
+         log.severe(e.getMessage());
+       }
+    }
+
+    private static void insertComment(String username, String body) {
+        String sql = "INSERT INTO comments (id, username, body, created_on) VALUES (?, ?, ?, current_timestamp)";
+        try (Connection con = connection();
+             PreparedStatement pStatement = con.prepareStatement(sql)) {
+            pStatement.setString(1, UUID.randomUUID().toString());
+            pStatement.setString(2, username);
+            pStatement.setString(3, body);
+            pStatement.executeUpdate();
+        } catch(Exception e) {
+            log.severe(e.getMessage());
         }
     }
 
@@ -62,7 +92,6 @@ public class Postgres {
     public static String md5(String input)
     {
         try {
-
             // Static getInstance method is called with hashing MD5
             MessageDigest md = MessageDigest.getInstance("MD5");
 
@@ -84,34 +113,6 @@ public class Postgres {
         // For specifying wrong message digest algorithms
         catch (NoSuchAlgorithmException e) {
             throw new RuntimeException(e);
-        }
-    }
-
-    private static void insertUser(String username, String password) {
-       String sql = "INSERT INTO users (user_id, username, password, created_on) VALUES (?, ?, ?, current_timestamp)";
-       PreparedStatement pStatement = null;
-       try {
-          pStatement = connection().prepareStatement(sql);
-          pStatement.setString(1, UUID.randomUUID().toString());
-          pStatement.setString(2, username);
-          pStatement.setString(3, md5(password));
-          pStatement.executeUpdate();
-       } catch(Exception e) {
-         e.printStackTrace();
-       }
-    }
-
-    private static void insertComment(String username, String body) {
-        String sql = "INSERT INTO comments (id, username, body, created_on) VALUES (?, ?, ?, current_timestamp)";
-        PreparedStatement pStatement = null;
-        try {
-            pStatement = connection().prepareStatement(sql);
-            pStatement.setString(1, UUID.randomUUID().toString());
-            pStatement.setString(2, username);
-            pStatement.setString(3, body);
-            pStatement.executeUpdate();
-        } catch(Exception e) {
-            e.printStackTrace();
         }
     }
 }
