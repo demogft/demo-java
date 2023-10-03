@@ -43,4 +43,10 @@ public class LinkLister {
       throw new BadRequest(e.getMessage());
     }
   }
+  
+  public static class BadRequest extends Exception {
+    public BadRequest(String message) {
+      super(message);
+    }
+  }
 }
