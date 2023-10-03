@@ -9,6 +9,7 @@ import java.io.Serializable;
 
 @RestController
 @EnableAutoConfiguration
+@CrossOrigin(origins = "http://trustedwebsite.com") //Make sure that enabling CORS is safe here.
 public class CommentsController {
   @Value("${app.secret}")
   private String secret;
@@ -16,7 +17,7 @@ public class CommentsController {
   @GetMapping(value = "/comments", produces = "application/json")
   List<Comment> comments(@RequestHeader(value="x-auth-token") String token) {
     User.assertAuth(secret, token);
-    return Comment.fetchAll(); // fixed method name
+    return Comment.fetchAll(); 
   }
 
   @PostMapping(value = "/comments", produces = "application/json", consumes = "application/json")
@@ -31,8 +32,13 @@ public class CommentsController {
 }
 
 class CommentRequest implements Serializable {
-  private String username;
-  private String body;
+  private final String username;
+  private final String body;
+
+  public CommentRequest(String username, String body) {
+      this.username = username;
+      this.body = body;
+  }
 
   public String getUsername() {
     return this.username;
@@ -56,4 +62,3 @@ class ServerError extends RuntimeException {
     super(exception);
   }
 }
-
