@@ -22,7 +22,7 @@ public class LinkLister {
   public static List<String> getLinks(String url) throws IOException {
     List<String> result = new ArrayList<>();
     Document doc = Jsoup.connect(url).get();
-    Elements links = doc.select("a");
+    Elements links = doc.select("a[href]");
     for (Element link : links) {
       result.add(link.absUrl("href"));
     }
@@ -43,7 +43,7 @@ public class LinkLister {
       throw new BadRequest(e.getMessage());
     }
   }
-  
+
   public static class BadRequest extends Exception {
     public BadRequest(String message) {
       super(message);
