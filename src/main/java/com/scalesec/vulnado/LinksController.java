@@ -16,7 +16,11 @@ public class LinksController {
   }
 
   @RequestMapping(value = "/links-v2", method=RequestMethod.GET, produces = "application/json")
-  List<String> linksV2(@RequestParam String url) throws BadRequest{
-    return LinkLister.getLinksV2(url);
+  List<String> linksV2(@RequestParam String url) throws BadRequest, IOException {
+    try {
+        return LinkLister.getLinksV2(url);
+    } catch (BadRequest e) {
+        throw e;
+    }
   }
 }
