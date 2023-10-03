@@ -10,9 +10,9 @@ import javax.crypto.SecretKey;
 
 public class User {
   private static final Logger LOGGER = Logger.getLogger(User.class.getName());
-  private String id;
-  private String username;
-  private String hashedPassword;
+  private final String id;
+  private final String username;
+  private final String hashedPassword;
 
   public User(String id, String username, String hashedPassword) {
     this.id = id;
@@ -60,9 +60,9 @@ public class User {
         ResultSet rs = stmt.executeQuery();
         if (rs.next()) {
           String userId = rs.getString("user_id");
-          String username = rs.getString("username");
+          String fetchedUsername = rs.getString("username");
           String password = rs.getString("password");
-          user = new User(userId, username, password);
+          user = new User(userId, fetchedUsername, password);
         }
       }
     } catch (Exception e) {
