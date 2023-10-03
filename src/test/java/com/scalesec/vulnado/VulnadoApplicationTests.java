@@ -18,5 +18,6 @@ public class VulnadoApplicationTests {
     @Test
     public void contextLoads() {
         Assert.assertNotNull(applicationContext);
+        Assert.assertTrue(applicationContext.containsBean("expectedBeanName"));
     }
 }
